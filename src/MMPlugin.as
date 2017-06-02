@@ -11,20 +11,23 @@ package
 	import jp.hiiragi.managers.soundConductor.events.*;
 	
 	/**
-	 * LemoNovel用のプラグインクラスで、oggを再生する。
+	 * LemoNovel用、oggを再生するプラグインクラス.
+	 * 
 	 * 
 	 */
 	public class MMPlugin extends MovieClip
 	{
-		private var m_lnExtIF:Object;
-		private var m_paramObj:Object;
-		private var m_url:String = "test.ogg";
-		private var m_soundId:SoundId;
-		private var m_soundPlayInfo:SoundPlayInfo;
-		private var m_soundController:SoundController;
+		private var m_lnExtIF:Object;	//LNの外部インターフェース
+		private var m_paramObj:Object;	//LNから来たパラメータ
+		private var m_url:String;	//oggの場所
+		private var m_soundId:SoundId;	//ロードの終わった音楽にアクセスする時のID.
+		private var m_soundPlayInfo:SoundPlayInfo;	//再生方法のデータ
+		private var m_soundController:SoundController;	//play, stopなどの音楽に対する操作
 		
 		/**
-		* コンストラクタ。最初に読み込まれるので、ここで初期化する。
+		* コンストラクタ.
+		* 
+		* 最初に読み込まれるので、ここで初期化する。
 		*/	
 		public function MMPlugin() 
 		{
@@ -32,9 +35,11 @@ package
 		}
 		
 		/**
-		 * データローダー。この関数を抜けてもロードが終わったという事ではないぞ
+		 * BGMローダー.
+		 * 
+		 * この関数を抜けてもロードが終わったという事ではないぞ
 		 */
-		public function LoadBGM():void
+		private function LoadBGM():void
 		{
 			m_lnExtIF.LN_Trace("INFO", "MM:LoadBGM");
 			var request:URLRequest = new URLRequest(m_url);

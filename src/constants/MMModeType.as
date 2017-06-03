@@ -8,7 +8,7 @@ package constants
 	{
 		public static const LOAD:MMModeType = new MMModeType();	
 		public static const PLAY:MMModeType = new MMModeType();	
-		
+		public static const INIT:MMModeType = new MMModeType();
 	}
 
 }

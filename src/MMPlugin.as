@@ -2,22 +2,22 @@ package
 {
 	import flash.display.MovieClip;
 	import constants.MMModeType;
-
+	
 	/**
 	 * LemoNovel用、oggを再生するプラグインクラス.
-	 * 
+	 *
 	 */
 	public class MMPlugin extends MovieClip
 	{
-		private var _mmParam:MMParam;	//セットされたパラメータ
-		private var _mmConductor:MMConductor;
+		private var _mmParam:MMParam;	//LNから受け取ったパラメタがパース・格納されている
+		private var _mmConductor:MMConductor;	//音楽再生などの主な動作を司るヤツ
 		
 		/**
-		* コンストラクタ.
-		* 
-		* LemoNovelから読み込まれた時、最初に始まる。
-		*/	
-		public function MMPlugin() 
+		 * コンストラクタ.
+		 *
+		 * LemoNovelから読み込まれた時、最初に始まる。
+		 */
+		public function MMPlugin()
 		{
 			_mmParam = new MMParam();
 			_mmConductor = new MMConductor();
@@ -25,7 +25,6 @@ package
 		
 		/**
 		 * LoadMovieLvで呼び出される関数。
-		 * パラメータの中に動作が書いてあるから、こっからはexecuteを呼ぶだけ。
 		 * @param	arg_lnExtIF		LNの内部インターフェース。
 		 * @param	arg_paramObj	LoadMovieLvから与えられるパラメータ。
 		 * @param	arg_volume		LN側のBGMの音量設定。0~1の値。TODO
@@ -38,6 +37,7 @@ package
 			execute();
 			LNExtIF.lnExtIF.LN_Trace("INFO", "Initialize end");
 		}
+		
 		/**
 		 * UpdateSWFParamで呼び出される関数。
 		 * @param	arg_paramObj	UpdateSWFParamから与えられるパラメータ。
@@ -53,14 +53,16 @@ package
 		 */
 		private function execute():void
 		{
-			switch (_mmParam.modeType)
+			switch (_mmParam.mode)
 			{
-				case MMModeType.LOAD:
-					_mmConductor.load(_mmParam.url);
-					break;
-				case MMModeType.PLAY:
-					_mmConductor.play();
-					break;
+			case MMModeType.LOAD: 
+				_mmConductor.load(_mmParam.url);
+				break;
+			case MMModeType.PLAY: 
+				_mmConductor.play();
+				break;
+			case MMModeType.INIT:
+				break;
 			}
 		}
 	}

@@ -27,6 +27,12 @@ package
 		 * volume.
 		 */
 		public function get volume():Number { return _volume; }
+		
+		private var _time:Number;
+		/**
+		 * time. フェードイン：アウトにかける時間(ms).
+		 */
+		public function get time():Number { return _time; }
 		/**
 		 * パラメタを消す
 		 */
@@ -35,6 +41,7 @@ package
 			_url = "";
 			_mode = null;
 			_volume = 1.0;
+			_time = 0;
 		}
 
 		/**
@@ -53,6 +60,8 @@ package
 				_mode = Mode.LOAD;
 			if (lnParam.mode == "play")
 				_mode = Mode.PLAY;
+			if (lnParam.mode == "stop")
+				_mode = Mode.STOP;
 
 			//url=
 			if (lnParam.url != undefined)
@@ -61,6 +70,10 @@ package
 			//volume=
 			if (lnParam.volume != undefined)
 				_volume = Number(lnParam.volume);
+			
+			//time=
+			if (lnParam.time != undefined)
+				_time = Number(lnParam.time);
 		}
 	}
 

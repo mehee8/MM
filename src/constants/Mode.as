@@ -14,6 +14,10 @@ package constants
 		
 		//初期化するよ(最初にやる)
 		public static const INIT:Mode = new Mode();
+		
+		//停止
+		public static const STOP:Mode = new Mode();
+		
 	}
 
 }

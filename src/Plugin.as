@@ -10,12 +10,16 @@ package
 	 *
 	 * <p><code>[LoadMovieLv level=... path=... param="mode=init" wait=NONE volType=BGM]</code>
 	 * で始める(但し...には適宜必要な値を入れる)。
-	 * この処理は時間がかかる。</p>
+	 * この処理は時間がかかる。initが終わった直後にちょろっと音が出てるときがある…？(TODO)</p>
 	 * 
 	 * <p>次以降は<code>[UpdateSWFParam dstLayer=OVERLAY dstIdx=... param=...]</code>で指示を出す。
 	 * paramには次のいずれかのセットを入れる：
-	 * <li><code>mode=load url=...</code> <p>urlのoggを読み込む</p></li>
-	 * 	<li><code>mode=play volume=...</code> <p>読み込んだ音楽をvolumeで再生する.volumeは省略可(デフォで1)</p></li>
+	 * <li><code>mode=load url=...</code>
+	 * 		<p>urlのoggを読み込む</p></li>
+	 * <li><code>mode=play volume=... time=...</code>
+	 * 		<p>読み込んだ音楽をvolumeで再生する.volumeは省略可(デフォで1)timeで設定された時間(ms)をかけてフェードインする（デフォは0）.</p></li>
+	 * <li><code>mode=stop time=...</code>
+	 * 		<p>音楽を停止する。timeで設定された時間(ms)をかけてフェードアウトする（デフォは0).</p></li>
 	 * .</p>
 	 * 
 	 * <p>明示的にこのプラグインを終了させるには<code>[DelMovieLv level=...]</code>を使う。</p>
@@ -98,9 +102,12 @@ package
 				_conductor.load(_param.url);
 				break;
 			case Mode.PLAY: 
-				_conductor.play(_param.volume);
+				_conductor.play(_param.volume, _param.time);
 				break;
 			case Mode.INIT:
+				break;
+			case Mode.STOP:
+				_conductor.stop(_param.time);
 				break;
 			}
 		}

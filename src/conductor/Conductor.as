@@ -88,14 +88,24 @@ package conductor
 		/**
 		 * 音楽を再生する.
 		 * @param	volume	再生開始時の音量.0~1の間を取る.デフォルトでは1。
+		 * @param	fadeInTime	フェードインにかける時間(ms).変化の仕方は一次関数。
 		 */
-		public function play(volume:Number = 1.0):void
+		public function play(volume:Number = 1.0, fadeInTime:Number = 0):void
 		{
 			//音量を設定
 			_soundPlayInfo.volume = volume;
 			
 			//SoundControllerにあとは任せる
-			_soundController = SoundConductor.play(_soundPlayInfo);
+			_soundController = SoundConductor.play(_soundPlayInfo, fadeInTime);
+		}
+		
+		/**
+		 * 音楽を停止する.
+		 * @param	fadeOutTime	フェードアウトにかける時間(ms).変化の仕方は一次関数。
+		 */
+		public function stop(fadeOutTime:Number = 0):void
+		{
+			_soundController.stop(fadeOutTime);
 		}
 		/**
 		 * 再生中のBGMの音量を変える.

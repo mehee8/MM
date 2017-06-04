@@ -1,12 +1,14 @@
 package 
 {
-	import mmConductor.constants.MMModeType;
+	import constants.Mode;
 	/**
-	 * LNから渡されたパラメータのデータクラス。
+	 * LNから渡されたパラメータをパースして一時的に保持するクラス.
+	 * 
+	 * 単にLNのパラメタ文字列を扱いやすいようにしただけ。
 	 * 
 	 * @author ore
 	 */
-	public class MMParam 
+	public class Parameters 
 	{
 		private var _url:String;
 		/**
@@ -14,11 +16,11 @@ package
 		 */
 		public function get url():String { return _url; }
 		
-		private var _mode:MMModeType;
+		private var _mode:Mode;
 		/**
 		 * mode. モードを取得する.
 		 */
-		public function get mode():MMModeType { return _mode; }
+		public function get mode():Mode { return _mode; }
 		
 		/**
 		 * パラメタを消す
@@ -38,16 +40,16 @@ package
 			//以前に呼ばれた時にセットされたパラメタを消す
 			reset();
 			
-			//取りうるパラメタのセットを限定する 例えばmode=initの時のみurlをセットするなど
+			//mode=
 			if (lnParam.mode == "init")
-				_mode = MMModeType.INIT;
+				_mode = Mode.INIT;
 			if (lnParam.mode == "load")
-			{
-				_mode = MMModeType.LOAD;
-				_url = lnParam.url;
-			}
+				_mode = Mode.LOAD;
 			if (lnParam.mode == "play")
-				_mode = MMModeType.PLAY;
+				_mode = Mode.PLAY;
+
+			//url=
+			_url = lnParam.url;
 		}
 	}
 

@@ -1,4 +1,4 @@
-package mmConductor 
+package conductor 
 {
 	import jp.hiiragi.managers.soundConductor.*;
 	import jp.hiiragi.managers.soundConductor.constants.*;
@@ -13,7 +13,7 @@ package mmConductor
 	 * MMの動作をになうクラス.
 	 * @author ore
 	 */
-	public class MMConductor 
+	public class Conductor 
 	{
 		//ロードした音楽を指すid
 		private var _soundId:SoundId;
@@ -28,7 +28,7 @@ package mmConductor
 		 * コンストラクタ.
 		 * 
 		 */
-		public function MMConductor() 
+		public function Conductor() 
 		{
 			//SoundConductorを初期化する。oggを使用できるようにする。
 			SoundConductor.initialize(false, null, true);

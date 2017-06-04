@@ -1,33 +1,43 @@
 package
 {
 	import flash.display.MovieClip;
-	import mmConductor.constants.MMModeType;
-	import mmConductor.MMConductor;
+	import constants.Mode;
+	import conductor.Conductor;
 	import nlExternalInterface.LNExtIF;
 	
 	/**
 	 * LemoNovel用、oggを再生するプラグインクラス.
 	 *
+	 * <p><code>[LoadMovieLv level=... path=... param="mode=init" wait=NONE]</code>で始める(但し...には適宜必要な値を入れる)。
+	 * この処理は時間がかかる。</p>
+	 * 
+	 * <p>次以降は<code>[UpdateSWFParam dstLayer=OVERLAY dstIdx=... param=...]</code>で指示を出す。
+	 * paramには次のいずれかのセットを入れる：
+	 * <li><code>mode=load url=...</code></li>
+	 * 	<li><code>mode=play</code></li>
+	 * .</p>
+	 * 
+	 * <p>明示的にこのプラグインを終了させるには<code>[DelMovieLv level=...]</code>を使う。</p>
 	 * 
 	 */
-	public class MMPlugin extends MovieClip
+	public class Plugin extends MovieClip
 	{
 		//パラメータオブジェクト
-		private var _mmParam:MMParam;
+		private var _param:Parameters;
 		
 		//音楽操作オブジェクト
-		private var _mmConductor:MMConductor;
+		private var _conductor:Conductor;
 		
 		/**
 		 * コンストラクタ.
 		 *
 		 * LemoNovelから読み込まれた時、最初に始まる。
 		 */
-		public function MMPlugin()
+		public function Plugin()
 		{
 			//Init & load
-			_mmParam = new MMParam();
-			_mmConductor = new MMConductor();
+			_param = new Parameters();
+			_conductor = new Conductor();
 		}
 		
 		/**
@@ -43,7 +53,7 @@ package
 //			nlExternalInterface.LNExtIF.lnExtIF.LN_Trace("INFO", "Initialize");
 
 			//LNのパラメタ文字列をパース
-			_mmParam.setLNParam(arg_paramObj);
+			_param.setLNParam(arg_paramObj);
 			
 			//パラメタに従って操作
 			execute();
@@ -57,7 +67,7 @@ package
 		public function NotifyParam(arg_paramObj:Object):void
 		{
 			//LNのパラメタ文字列をパース
-			_mmParam.setLNParam(arg_paramObj);
+			_param.setLNParam(arg_paramObj);
 
 			//パラメタに従って操作
 			execute();
@@ -69,15 +79,15 @@ package
 		private function execute():void
 		{
 			//mode=?
-			switch (_mmParam.mode)
+			switch (_param.mode)
 			{
-			case MMModeType.LOAD: 
-				_mmConductor.load(_mmParam.url);
+			case Mode.LOAD: 
+				_conductor.load(_param.url);
 				break;
-			case MMModeType.PLAY: 
-				_mmConductor.play();
+			case Mode.PLAY: 
+				_conductor.play();
 				break;
-			case MMModeType.INIT:
+			case Mode.INIT:
 				break;
 			}
 		}

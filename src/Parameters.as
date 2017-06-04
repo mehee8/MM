@@ -22,6 +22,11 @@ package
 		 */
 		public function get mode():Mode { return _mode; }
 		
+		private var _volume:Number;
+		/**
+		 * volume.
+		 */
+		public function get volume():Number { return _volume; }
 		/**
 		 * パラメタを消す
 		 */
@@ -29,6 +34,7 @@ package
 		{
 			_url = "";
 			_mode = null;
+			_volume = 1.0;
 		}
 
 		/**
@@ -49,7 +55,12 @@ package
 				_mode = Mode.PLAY;
 
 			//url=
-			_url = lnParam.url;
+			if (lnParam.url != undefined)
+				_url = lnParam.url;
+			
+			//volume=
+			if (lnParam.volume != undefined)
+				_volume = Number(lnParam.volume);
 		}
 	}
 

@@ -87,11 +87,31 @@ package conductor
 		}
 		/**
 		 * 音楽を再生する.
+		 * @param	volume	再生開始時の音量.0~1の間を取る.デフォルトでは1。
 		 */
-		public function play():void
+		public function play(volume:Number = 1.0):void
 		{
-			//詳しくはSoundConductorのAPIをみてくれ。
+			//音量を設定
+			_soundPlayInfo.volume = volume;
+			
+			//SoundControllerにあとは任せる
 			_soundController = SoundConductor.play(_soundPlayInfo);
+		}
+		/**
+		 * 再生中のBGMの音量を変える.
+		 * @param	volume
+		 */
+		public function adjustVolume(volume:Number):void
+		{
+			_soundController.setVolume(volume);
+		}
+		/**
+		 * マスターボリュームを設定する。
+		 * @param	volume	0~1
+		 */
+		public function setMasterVolume(volume:Number):void
+		{
+			SoundConductor.setMasterVolume(volume);
 		}
 		
 		

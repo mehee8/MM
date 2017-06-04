@@ -1,4 +1,4 @@
-package 
+package mmConductor 
 {
 	import jp.hiiragi.managers.soundConductor.*;
 	import jp.hiiragi.managers.soundConductor.constants.*;
@@ -7,6 +7,7 @@ package
 	import flash.net.URLLoader;
 	import flash.net.URLLoaderDataFormat;
 	import flash.utils.ByteArray;
+	import nlExternalInterface.LNExtIF;
 
 	/**
 	 * MMの動作をになうクラス.
@@ -14,16 +15,22 @@ package
 	 */
 	public class MMConductor 
 	{
-		private var _soundId:SoundId;	//ロードした音楽を指すid
-		private var _soundPlayInfo:SoundPlayInfo;	//BGMの再生方法など
+		//ロードした音楽を指すid
+		private var _soundId:SoundId;
+		
+		//BGMの再生方法など
+		private var _soundPlayInfo:SoundPlayInfo;
+		
+		//再生するBGMはここにいれる
 		private var _soundController:SoundController;
 
 		/**
 		 * コンストラクタ.
-		 * SoundConductorを初期化する。
+		 * 
 		 */
 		public function MMConductor() 
 		{
+			//SoundConductorを初期化する。oggを使用できるようにする。
 			SoundConductor.initialize(false, null, true);
 		}
 		
@@ -33,23 +40,26 @@ package
 		 */
 		public function load(url:String):void
 		{
-			LNExtIF.lnExtIF.LN_Trace("INFO", "MM:LoadBGM");
+			nlExternalInterface.LNExtIF.lnExtIF.LN_Trace("INFO", "MM:LoadBGM");
+			//URLrequestをつくって
 			var request:URLRequest = new URLRequest(url);
+			
+			//ダウンロードする
 			var urlLoader:URLLoader = new URLLoader(request);
-			//ロギング用
+			
+			//データがバイナリであると言っとく
+			urlLoader.dataFormat = URLLoaderDataFormat.BINARY;
+			
+			//ロギング用のハンドラを追加する
 			urlLoader.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
 			urlLoader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
 //			urlLoader.addEventListener(ProgressEvent.PROGRESS, progressHandler);
 
-			urlLoader.dataFormat = URLLoaderDataFormat.BINARY;
 			//ロードが終わったら次へ
 			urlLoader.addEventListener(Event.COMPLETE, completeHandler);
-			LNExtIF.lnExtIF.LN_Trace("INFO", "MM:LoadBGM end");
+
+			nlExternalInterface.LNExtIF.lnExtIF.LN_Trace("INFO", "MM:LoadBGM end");
 			
-		}
-		public function play():void
-		{
-			_soundController = SoundConductor.play(_soundPlayInfo);
 		}
 		/**
 		 * ロードが終わった時のハンドラ.
@@ -57,26 +67,46 @@ package
 		 */
 		private function completeHandler(event:Event):void
 		{
-			LNExtIF.lnExtIF.LN_Trace("INFO", "MM:SetBGM");
+			nlExternalInterface.LNExtIF.lnExtIF.LN_Trace("INFO", "MM:SetBGM");
+			//ロードしたバイナリデータをByteArrayに入れる
 			var oggData:ByteArray = URLLoader(event.target).data as ByteArray;
+			
+			//ByteArrayをSoundConductorに登録してIDをもらう
 			_soundId = SoundConductor.registerOggBinary(oggData);
+			
+			//SoundPlayInfoを作る
 			_soundPlayInfo = new SoundPlayInfo(_soundId);
+			
+			//部分ループを可能にする
 			_soundPlayInfo.soundPlayType = SoundPlayType.SINGLE_SOUND_GENERATOR;
+			
+			//無限ループにする
 			_soundPlayInfo.loops = SoundLoopType.INFINITE_LOOP;
-			LNExtIF.lnExtIF.LN_Trace("INFO", "MM:SetBGM end");
+			
+			nlExternalInterface.LNExtIF.lnExtIF.LN_Trace("INFO", "MM:SetBGM end");
+		}
+		/**
+		 * 音楽を再生する.
+		 */
+		public function play():void
+		{
+			//詳しくはSoundConductorのAPIをみてくれ。
+			_soundController = SoundConductor.play(_soundPlayInfo);
 		}
 		
+		
+		//以下はロギング用ハンドラ
 		private function ioErrorHandler(event:Event):void
 		{
-			LNExtIF.lnExtIF.LN_Trace("ERROR", "ioerror: " + event.toString());
+			nlExternalInterface.LNExtIF.lnExtIF.LN_Trace("ERROR", "ioerror: " + event.toString());
 		}
 		private function securityErrorHandler(event:Event):void
 		{
-			LNExtIF.lnExtIF.LN_Trace("ERROR", "securityerror: " + event.toString());
+			nlExternalInterface.LNExtIF.lnExtIF.LN_Trace("ERROR", "securityerror: " + event.toString());
 		}
 		private function progressHandler(event:Event):void
 		{
-			LNExtIF.lnExtIF.LN_Trace("INFO", "progression: " + event);
+			nlExternalInterface.LNExtIF.lnExtIF.LN_Trace("INFO", "progression: " + event);
 		}
 		
 	}

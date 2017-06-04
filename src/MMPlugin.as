@@ -1,16 +1,22 @@
 package
 {
 	import flash.display.MovieClip;
-	import constants.MMModeType;
+	import mmConductor.constants.MMModeType;
+	import mmConductor.MMConductor;
+	import nlExternalInterface.LNExtIF;
 	
 	/**
 	 * LemoNovel用、oggを再生するプラグインクラス.
 	 *
+	 * 
 	 */
 	public class MMPlugin extends MovieClip
 	{
-		private var _mmParam:MMParam;	//LNから受け取ったパラメタがパース・格納されている
-		private var _mmConductor:MMConductor;	//音楽再生などの主な動作を司るヤツ
+		//パラメータオブジェクト
+		private var _mmParam:MMParam;
+		
+		//音楽操作オブジェクト
+		private var _mmConductor:MMConductor;
 		
 		/**
 		 * コンストラクタ.
@@ -19,6 +25,7 @@ package
 		 */
 		public function MMPlugin()
 		{
+			//Init & load
 			_mmParam = new MMParam();
 			_mmConductor = new MMConductor();
 		}
@@ -31,11 +38,16 @@ package
 		 */
 		public function Initialize(arg_lnExtIF:Object, arg_paramObj:Object, arg_volume:Number):void
 		{
-			LNExtIF.lnExtIF = arg_lnExtIF;
-			LNExtIF.lnExtIF.LN_Trace("INFO", "Initialize");
+			//NL外部インタフェイスを取得
+			nlExternalInterface.LNExtIF.lnExtIF = arg_lnExtIF;
+//			nlExternalInterface.LNExtIF.lnExtIF.LN_Trace("INFO", "Initialize");
+
+			//LNのパラメタ文字列をパース
 			_mmParam.setLNParam(arg_paramObj);
+			
+			//パラメタに従って操作
 			execute();
-			LNExtIF.lnExtIF.LN_Trace("INFO", "Initialize end");
+//			nlExternalInterface.LNExtIF.lnExtIF.LN_Trace("INFO", "Initialize end");
 		}
 		
 		/**
@@ -44,15 +56,19 @@ package
 		 */
 		public function NotifyParam(arg_paramObj:Object):void
 		{
+			//LNのパラメタ文字列をパース
 			_mmParam.setLNParam(arg_paramObj);
+
+			//パラメタに従って操作
 			execute();
 		}
 		
 		/**
-		 * パラメータに従って行う動作.
+		 * 実行部分.パラメタで振る舞いを変える。
 		 */
 		private function execute():void
 		{
+			//mode=?
 			switch (_mmParam.mode)
 			{
 			case MMModeType.LOAD: 

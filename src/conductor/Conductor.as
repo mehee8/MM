@@ -109,11 +109,28 @@ package conductor
 		}
 		/**
 		 * 再生中のBGMの音量を変える.
-		 * @param	volume
+		 * @param	volume	0~1
+		 * @param	easingTime	そのボリュームへ変わるまでの時間(ms).変化の仕方は一次関数。
 		 */
-		public function adjustVolume(volume:Number):void
+		public function adjustVolume(volume:Number, easingTime:Number = 0):void
 		{
-			_soundController.setVolume(volume);
+			_soundController.setVolume(volume, easingTime);
+		}
+		/**
+		 * 再生中のBGMを一時停止する.
+		 * @param	fadeOutTime	一時停止するまでにかかる時間(ms).変化の仕方は一次関数。
+		 */
+		public function pause(fadeOutTime:Number):void
+		{
+			_soundController.pause(fadeOutTime);
+		}
+		/**
+		 * 一時停止したBGMを再開する.
+		 * @param	fadeInTime	再開するまでにかかる時間(ms).変化の仕方は一次関数。
+		 */
+		public function resume(fadeInTime:Number):void
+		{
+			_soundController.resume(fadeInTime);
 		}
 		/**
 		 * マスターボリュームを設定する。

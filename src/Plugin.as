@@ -20,6 +20,12 @@ package
 	 * 		<p>読み込んだ音楽をvolumeで再生する.volumeは省略可(デフォで1)timeで設定された時間(ms)をかけてフェードインする（デフォは0）.</p></li>
 	 * <li><code>mode=stop time=...</code>
 	 * 		<p>音楽を停止する。timeで設定された時間(ms)をかけてフェードアウトする（デフォは0).</p></li>
+	 * <li><code>mode=adjust volume=... time=...</code>
+	 * 		<p>再生中の音楽の音量をvolume(0~1)へ変更する。timeで設定された時間(ms)をかけて線形に変化させる（デフォは0).</p></li>
+	 * <li><code>mode=pause time=...</code>
+	 * 		<p>音楽を一時停止する。timeで設定された時間(ms)をかけてフェードアウトする（デフォは0).</p></li>
+	 * <li><code>mode=resume time=...</code>
+	 * 		<p>音楽を再開する。timeで設定された時間(ms)をかけてフェードインする（デフォは0).</p></li>
 	 * .</p>
 	 * 
 	 * <p>明示的にこのプラグインを終了させるには<code>[DelMovieLv level=...]</code>を使う。</p>
@@ -109,6 +115,16 @@ package
 			case Mode.STOP:
 				_conductor.stop(_param.time);
 				break;
+			case Mode.ADJUST:
+				_conductor.adjustVolume(_param.volume, _param.time);
+				break;
+			case Mode.PAUSE:
+				_conductor.pause(_param.time);
+				break;
+			case Mode.RESUME:
+				_conductor.resume(_param.time);
+				break;
+				
 			}
 		}
 	}

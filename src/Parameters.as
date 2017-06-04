@@ -62,6 +62,12 @@ package
 				_mode = Mode.PLAY;
 			if (lnParam.mode == "stop")
 				_mode = Mode.STOP;
+			if (lnParam.mode == "adjust")
+				_mode = Mode.ADJUST;
+			if (lnParam.mode == "pause")
+				_mode = Mode.PAUSE;
+			if (lnParam.mode == "resume")
+				_mode = Mode.RESUME;
 
 			//url=
 			if (lnParam.url != undefined)
@@ -74,6 +80,7 @@ package
 			//time=
 			if (lnParam.time != undefined)
 				_time = Number(lnParam.time);
+			
 		}
 	}
 

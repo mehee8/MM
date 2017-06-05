@@ -2,8 +2,8 @@ package
 {
 	import flash.display.MovieClip;
 	import constants.Mode;
-	import conductor.Conductor;
 	import nlExternalInterface.LNExtIF;
+	import jp.gr.java_conf.ennea.sound.*;
 	
 	/**
 	 * LemoNovel用、oggを再生するプラグインクラス.
@@ -17,15 +17,11 @@ package
 	 * <li><code>mode=load url=...</code>
 	 * 		<p>urlのoggを読み込む</p></li>
 	 * <li><code>mode=play volume=... time=...</code>
-	 * 		<p>読み込んだ音楽をvolumeで再生する.volumeは省略可(デフォで1)timeで設定された時間(ms)をかけてフェードインする（デフォは0）.</p></li>
+	 * 		<p>読み込んだ音楽をvolumeで再生する.volumeは省略可(デフォで1)timeで設定された時間(ms)をかけて二次関数的にフェードインする（デフォは0）.</p></li>
 	 * <li><code>mode=stop time=...</code>
-	 * 		<p>音楽を停止する。timeで設定された時間(ms)をかけてフェードアウトする（デフォは0).</p></li>
+	 * 		<p>音楽を停止する。timeで設定された時間(ms)をかけて二次関数的にフェードアウトする（デフォは0).</p></li>
 	 * <li><code>mode=adjust volume=... time=...</code>
-	 * 		<p>再生中の音楽の音量をvolume(0~1)へ変更する。timeで設定された時間(ms)をかけて線形に変化させる（デフォは0).</p></li>
-	 * <li><code>mode=pause time=...</code>
-	 * 		<p>音楽を一時停止する。timeで設定された時間(ms)をかけてフェードアウトする（デフォは0).</p></li>
-	 * <li><code>mode=resume time=...</code>
-	 * 		<p>音楽を再開する。timeで設定された時間(ms)をかけてフェードインする（デフォは0).</p></li>
+	 * 		<p>再生中の音楽の音量をvolume(0~1)へ変更する。timeで設定された時間(ms)をかけて二次関数的に変化させる（デフォは0).</p></li>
 	 * .</p>
 	 * 
 	 * <p>明示的にこのプラグインを終了させるには<code>[DelMovieLv level=...]</code>を使う。</p>
@@ -35,10 +31,7 @@ package
 	{
 		//パラメータオブジェクト
 		private var _param:Parameters;
-				
-		//音楽操作オブジェクト
-		private var _conductor:Conductor;
-		
+						
 		/**
 		 * コンストラクタ.
 		 *
@@ -48,7 +41,10 @@ package
 		{
 			//Init & load
 			_param = new Parameters();
-			_conductor = new Conductor();
+
+			//VorbisASを使えるようにする
+			haxe.initSwc(this);
+			VorbisAS.initialize();
 		}
 		
 		/**
@@ -61,17 +57,17 @@ package
 		{
 			//NL外部インタフェイスを取得
 			nlExternalInterface.LNExtIF.lnExtIF = arg_lnExtIF;
-//			nlExternalInterface.LNExtIF.lnExtIF.LN_Trace("INFO", "Initialize");
 
 			//LNのパラメタ文字列をパース
 			_param.setLNParam(arg_paramObj);
 			
-			//_conductorのマスターボリュームとNLのBGMvolumeを合わせる
-			_conductor.setMasterVolume(arg_volume);
+			//VorbisASのマスターボリュームとNLのBGMvolumeを合わせる
+			VorbisAS.masterVolume = arg_volume;
 			
 			//パラメタに従って操作
 			execute();
-//			nlExternalInterface.LNExtIF.lnExtIF.LN_Trace("INFO", "Initialize end");
+
+
 		}
 		
 		/**
@@ -85,6 +81,7 @@ package
 
 			//パラメタに従って操作
 			execute();
+
 		}
 		/**
 		 * NLのBGMVolumeが変更されたとき([SetSystem bgmVolume=...])に呼ばれる関数
@@ -92,8 +89,8 @@ package
 		 */
 		public function NotifyChangeVolume(arg_volume:Number):void
 		{
-			//_conductorのマスターボリュームとNLのBGMvolumeを合わせる
-			_conductor.setMasterVolume(arg_volume);			
+			//VorbisASのマスターボリュームとNLのBGMvolumeを合わせる
+			VorbisAS.masterVolume = arg_volume;
 		}
 		
 		/**
@@ -105,24 +102,18 @@ package
 			switch (_param.mode)
 			{
 			case Mode.LOAD: 
-				_conductor.load(_param.url);
+				VorbisAS.loadSound(_param.url, "hoge");
 				break;
 			case Mode.PLAY: 
-				_conductor.play(_param.volume, _param.time);
+				VorbisAS.playLoop("hoge",0).fadeTo(_param.volume, _param.time, false);
 				break;
 			case Mode.INIT:
 				break;
 			case Mode.STOP:
-				_conductor.stop(_param.time);
+				VorbisAS.fadeTo("hoge", 0, _param.time);
 				break;
 			case Mode.ADJUST:
-				_conductor.adjustVolume(_param.volume, _param.time);
-				break;
-			case Mode.PAUSE:
-				_conductor.pause(_param.time);
-				break;
-			case Mode.RESUME:
-				_conductor.resume(_param.time);
+				VorbisAS.fadeTo("hoge", _param.volume, _param.time, false);
 				break;
 				
 			}

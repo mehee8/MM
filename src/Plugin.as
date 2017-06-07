@@ -101,19 +101,36 @@ package
 			//mode=?
 			switch (_param.mode)
 			{
+
+			case Mode.INIT:
+				break;
 			case Mode.LOAD: 
 				VorbisAS.loadSound(_param.url, "hoge");
 				break;
 			case Mode.PLAY: 
 				VorbisAS.playLoop("hoge",0).fadeTo(_param.volume, _param.time, false);
 				break;
-			case Mode.INIT:
-				break;
 			case Mode.STOP:
 				VorbisAS.fadeTo("hoge", 0, _param.time);
 				break;
 			case Mode.ADJUST:
 				VorbisAS.fadeTo("hoge", _param.volume, _param.time, false);
+				break;
+			case Mode.PAUSE:
+				VorbisAS.fadeTo("hoge", 0, _param.time, false)
+						//note: addOnceで多分1回きりってことだろうけど、実はendedがdispatchされた後はremoveAllされてる(VorbisTween参照)
+						.fade.ended.addOnce(function(instance:VorbisInstance):void
+							{
+								//fade.endedは、ポーズ以外のモードのfade終了も使ってる。
+								//なので、ポーズのfadeがendしたかどうかを特定しなければならない。
+								//それが分からんので、とりあえず「音量が0かどうか」を条件とする。
+								if (instance.volume == 0)
+									instance.pause();
+							}
+						);
+				break;
+			case Mode.RESUME:		
+				VorbisAS.resume("hoge").fadeTo(_param.volume, _param.time, false);
 				break;
 				
 			}

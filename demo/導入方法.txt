@@ -1,0 +1,26 @@
+1. resource/MM.swf を、プラグイン用のどっかのフォルダにぶち込む。
+	例えば plugin/MM.swf でも data/plugin/MM.swf でも、そのまま resource/MM.swf でもいい。
+
+
+2. LemoNovel_AS3.ini の中の
+
+		// マクロ定義ファイルのパス
+		macroDefine	= "./script/def_macro.txt"
+	
+	を確認する。このプラグインではマクロを使うので、自分のiniファイルの中に、
+	もしmacroDefineが設定されてなかったら、上記のような行をぶち込む。
+	もし設定されていたらそのまま次へ進む。
+
+
+3. script/def_macro.txt を、マクロ定義ファイル用のどっかのフォルダにぶち込む。
+	そして 2. で設定したファイルパスと一致させる。
+	
+
+4. def_macro.txt を開いて、4行目にある
+
+		[LoadMovieLv level=77 path="./resource/MM.swf" param="mode=init" wait=NONE volType=BGM]
+
+	のうち、"./resource/MM.swf" の部分を、 1. で設定したファイルパスにする。
+
+
+5. 終わり。使い方はscript/first.txt を見る。

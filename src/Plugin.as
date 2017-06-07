@@ -14,14 +14,14 @@ package
 	 * 
 	 * <p>次以降は<code>[UpdateSWFParam dstLayer=OVERLAY dstIdx=... param=...]</code>で指示を出す。
 	 * paramには次のいずれかのセットを入れる：
-	 * <li><code>mode=load url=...</code>
-	 * 		<p>urlのoggを読み込む</p></li>
+	 * <li><code>id=... mode=load url=...</code>
+	 * 		<p>idにurlのoggを読み込む</p></li>
 	 * <li><code>mode=play volume=... time=...</code>
-	 * 		<p>読み込んだ音楽をvolumeで再生する.volumeは省略可(デフォで1)timeで設定された時間(ms)をかけて二次関数的にフェードインする（デフォは0）.</p></li>
+	 * 		<p>idに読み込んだ音楽をvolumeで再生する.volumeは省略可(デフォで1)timeで設定された時間(ms)をかけて二次関数的にフェードインする（デフォは0）.</p></li>
 	 * <li><code>mode=stop time=...</code>
-	 * 		<p>音楽を停止する。timeで設定された時間(ms)をかけて二次関数的にフェードアウトする（デフォは0).</p></li>
+	 * 		<p>idの音楽を停止する。timeで設定された時間(ms)をかけて二次関数的にフェードアウトする（デフォは0).</p></li>
 	 * <li><code>mode=adjust volume=... time=...</code>
-	 * 		<p>再生中の音楽の音量をvolume(0~1)へ変更する。timeで設定された時間(ms)をかけて二次関数的に変化させる（デフォは0).</p></li>
+	 * 		<p>idで再生中の音楽の音量をvolume(0~1)へ変更する。timeで設定された時間(ms)をかけて二次関数的に変化させる（デフォは0).</p></li>
 	 * .</p>
 	 * 
 	 * <p>明示的にこのプラグインを終了させるには<code>[DelMovieLv level=...]</code>を使う。</p>
@@ -56,7 +56,7 @@ package
 		public function Initialize(arg_lnExtIF:Object, arg_paramObj:Object, arg_volume:Number):void
 		{
 			//NL外部インタフェイスを取得
-			nlExternalInterface.LNExtIF.lnExtIF = arg_lnExtIF;
+			LNExtIF.lnExtIF = arg_lnExtIF;
 
 			//LNのパラメタ文字列をパース
 			_param.setLNParam(arg_paramObj);
@@ -66,8 +66,6 @@ package
 			
 			//パラメタに従って操作
 			execute();
-
-
 		}
 		
 		/**
@@ -76,8 +74,14 @@ package
 		 */
 		public function NotifyParam(arg_paramObj:Object):void
 		{
+			LNExtIF.lnExtIF.LN_Trace("INFO", "arg_param:id= " + arg_paramObj.id);
+			LNExtIF.lnExtIF.LN_Trace("INFO", "arg_param:volume= " + arg_paramObj.volume);
+
 			//LNのパラメタ文字列をパース
 			_param.setLNParam(arg_paramObj);
+
+			LNExtIF.lnExtIF.LN_Trace("INFO", "_param:id= " + _param.id);
+			LNExtIF.lnExtIF.LN_Trace("INFO", "_param:volume= " + _param.volume.toString());
 
 			//パラメタに従って操作
 			execute();
@@ -105,22 +109,29 @@ package
 			case Mode.INIT:
 				break;
 			case Mode.LOAD: 
-				VorbisAS.loadSound(_param.url, "hoge");
+				VorbisAS.loadSound(_param.url, _param.id);
+					//loadに失敗した時は何もしない。idがヘンでも何もしない。
+				break;
+			case Mode.UNLOAD:	//まだ音が鳴っててもぶつ切り。
+				VorbisAS.removeSound(_param.id);	//すでに無いときは何もしない
 				break;
 			case Mode.PLAY: 
-				VorbisAS.playLoop("hoge",0).fadeTo(_param.volume, _param.time, false);
+				VorbisAS.playLoop(_param.id, 0).fadeTo(_param.volume, _param.time, false);
+					//idが違うorロード出来てないなどの時は例外を投げてる。
 				break;
 			case Mode.STOP:
-				VorbisAS.fadeTo("hoge", 0, _param.time);
+				VorbisAS.fadeTo(_param.id, 0, _param.time);
 				break;
 			case Mode.ADJUST:
-				VorbisAS.fadeTo("hoge", _param.volume, _param.time, false);
+				VorbisAS.fadeTo(_param.id, _param.volume, _param.time, false);
 				break;
 			case Mode.PAUSE:
-				VorbisAS.fadeTo("hoge", 0, _param.time, false)
+				VorbisAS.fadeTo(_param.id, 0, _param.time, false)
+				
 						//note: addOnceで多分1回きりってことだろうけど、実はendedがdispatchされた後はremoveAllされてる(VorbisTween参照)
 						.fade.ended.addOnce(function(instance:VorbisInstance):void
 							{
+								
 								//fade.endedは、ポーズ以外のモードのfade終了も使ってる。
 								//なので、ポーズのfadeがendしたかどうかを特定しなければならない。
 								//それが分からんので、とりあえず「音量が0かどうか」を条件とする。
@@ -130,7 +141,7 @@ package
 						);
 				break;
 			case Mode.RESUME:		
-				VorbisAS.resume("hoge").fadeTo(_param.volume, _param.time, false);
+				VorbisAS.resume(_param.id).fadeTo(_param.volume, _param.time, false);
 				break;
 				
 			}

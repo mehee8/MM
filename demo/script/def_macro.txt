@@ -1,0 +1,10 @@
+//MM.swfがプラグイン
+
+[Macro name="InitMM"]
+[LoadMovieLv level=77 path="./resource/MM.swf" param="mode=init" wait=NONE volType=BGM]
+[EndMacro]
+
+[Macro name="MM"]
+[UpdateSWFParam dstLayer=OVERLAY dstIdx=77 param="id=%id mode=%mode url=%url volume=%volume time=%time"]
+[EndMacro]
+

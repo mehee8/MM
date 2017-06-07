@@ -10,6 +10,12 @@ package
 	 */
 	public class Parameters 
 	{
+		private var _id:String;
+		/**
+		 * id. 操作する音楽のid
+		 */
+		public function get id():String { return _id; }
+
 		private var _url:String;
 		/**
 		 * url. oggファイルのアドレスを取得する.
@@ -34,7 +40,8 @@ package
 		 */
 		public function get time():Number { return _time; }
 		/**
-		 * パラメタを消す
+		 * パラメタをデフォルト値へリセットする。
+		 * idは前回入力した値を保持する。
 		 */
 		private function reset():void
 		{
@@ -68,18 +75,24 @@ package
 				_mode = Mode.PAUSE;
 			if (lnParam.mode == "resume")
 				_mode = Mode.RESUME;
+			if (lnParam.mode == "unload")
+				_mode = Mode.UNLOAD;
 
 			//url=
-			if (lnParam.url != undefined)
+			if (lnParam.url != "undefined")	//省略されている場合は"undefined"という文字列が入ってる。
 				_url = lnParam.url;
 			
 			//volume=
-			if (lnParam.volume != undefined)
+			if (lnParam.volume != "undefined")
 				_volume = Number(lnParam.volume);
 			
 			//time=
-			if (lnParam.time != undefined)
+			if (lnParam.time != "undefined")
 				_time = Number(lnParam.time);
+				
+			//id=
+			if (lnParam.id != "undefined")
+				_id = lnParam.id;
 			
 		}
 	}

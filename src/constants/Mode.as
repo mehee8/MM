@@ -40,6 +40,11 @@ package constants
 		 * 再生再開
 		 */
 		public static const RESUME:Mode = new Mode();
+		
+		/**
+		 * アンロード
+		 */
+		public static const UNLOAD:Mode = new Mode();
 	}
 
 }
